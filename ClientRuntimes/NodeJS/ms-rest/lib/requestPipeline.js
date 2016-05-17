@@ -3,7 +3,9 @@
 
 'use strict';
 
-var request = require('request');
+//var request = require('request');
+var superagent = require('superagent');
+var agent = superagent.agent();
 var through = require('through');
 var duplexer = require('duplexer');
 var _ = require('underscore');
@@ -80,51 +82,89 @@ exports.createWithSink = function(sink) {
  * @param callback function(err, result, response, body) callback function that
  * will be called at completion of the request.
  */
-exports.requestLibrarySink = function (requestOptions) {
+// exports.requestLibrarySink = function (requestOptions) {
 
-  return function (options, callback) {
-    request = request.defaults(requestOptions);
-    var requestStream;
-    var bodyStream;
-    if (options.headersOnly) {
-      var requestHeaderStream = request(options);
-      requestHeaderStream.on('error', function (err) {
-        return callback(err);
-      });
-      requestHeaderStream.on('response', function (response) {
-        requestHeaderStream.on('end', function () {
-          return callback(null, response);
-        });
-      });      
-      return requestHeaderStream;
-    } else if (options.streamedResponse) {
-      if (options.body && typeof options.body.pipe === 'function') {
-        bodyStream = options.body;
-        options.body = null;
-        requestStream = bodyStream.pipe(request(options));
-      } else {
-        requestStream = request(options);
-      }
-      requestStream.on('error', function (err) {
-        return callback(err);
-      });
-      requestStream.on('response', function (response) {
-        return callback(null, response);
-      });
-      return requestStream;
-    } else if (options.body && typeof options.body.pipe === 'function') {
-      bodyStream = options.body;
-      options.body = null;
-      return bodyStream.pipe(request(options, function (err, response, body) {
-        if (err) { return callback(err); }
-        return callback(null, response, body);
-      }));
-    } else {
-      return request(options, function (err, response, body) {
-        if (err) { return callback(err); }
-        return callback(null, response, body);
-      });
+//   return function (options, callback) {
+//     request = request.defaults(requestOptions);
+//     var requestStream;
+//     var bodyStream;
+//     if (options.headersOnly) {
+//       var requestHeaderStream = request(options);
+//       requestHeaderStream.on('error', function (err) {
+//         return callback(err);
+//       });
+//       requestHeaderStream.on('response', function (response) {
+//         requestHeaderStream.on('end', function () {
+//           return callback(null, response);
+//         });
+//       });      
+//       return requestHeaderStream;
+//     } else if (options.streamedResponse) {
+//       if (options.body && typeof options.body.pipe === 'function') {
+//         bodyStream = options.body;
+//         options.body = null;
+//         requestStream = bodyStream.pipe(request(options));
+//       } else {
+//         requestStream = request(options);
+//       }
+//       requestStream.on('error', function (err) {
+//         return callback(err);
+//       });
+//       requestStream.on('response', function (response) {
+//         return callback(null, response);
+//       });
+//       return requestStream;
+//     } else if (options.body && typeof options.body.pipe === 'function') {
+//       bodyStream = options.body;
+//       options.body = null;
+//       return bodyStream.pipe(request(options, function (err, response, body) {
+//         if (err) { return callback(err); }
+//         return callback(null, response, body);
+//       }));
+//     } else {
+//       return request(options, function (err, response, body) {
+//         if (err) { return callback(err); }
+//         return callback(null, response, body);
+//       });
+//     }
+//   };
+// };
+
+exports.requestLibrarySink = function (requestOptions) {
+  var initRequest = function(method, url) {
+    var request = agent;
+    if (method === 'GET') {
+      request = request.get(url);
+    } else if (method === 'HEAD') {
+      request = request.head(url);
+    } else if (method === 'PUT') {
+      request = request.put(url);
+    } else if (method === 'POST') {
+      request = request.post(url);
     }
+    return request;
+  };
+  
+  return function (options, callback) {
+    var superagentMock = null;
+    if(requestOptions.testConfig){
+      superagentMock = require('superagent-mock')(superagent, requestOptions.testConfig);
+    }
+
+    var request = initRequest(options.method, options.url);
+
+    if(requestOptions.headers){ request.set(requestOptions.headers); }
+    if(options.headers){ request.set(options.headers); }
+    if(options.query){ request.query(options.query); }
+    request.send(options.body);
+    return request.end(function(err, res){
+      if(superagentMock){
+        superagentMock.unset();
+      }
+
+      if (err) { return callback(err); }
+      return callback(null, res, res.text);
+    });
   };
 };
 
