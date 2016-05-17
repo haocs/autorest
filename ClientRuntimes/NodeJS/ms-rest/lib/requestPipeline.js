@@ -82,53 +82,53 @@ exports.createWithSink = function(sink) {
  * @param callback function(err, result, response, body) callback function that
  * will be called at completion of the request.
  */
-// exports.requestLibrarySink = function (requestOptions) {
+ //exports.requestLibrarySink = function (requestOptions) {
 
-//   return function (options, callback) {
-//     request = request.defaults(requestOptions);
-//     var requestStream;
-//     var bodyStream;
-//     if (options.headersOnly) {
-//       var requestHeaderStream = request(options);
-//       requestHeaderStream.on('error', function (err) {
-//         return callback(err);
-//       });
-//       requestHeaderStream.on('response', function (response) {
-//         requestHeaderStream.on('end', function () {
-//           return callback(null, response);
-//         });
-//       });      
-//       return requestHeaderStream;
-//     } else if (options.streamedResponse) {
-//       if (options.body && typeof options.body.pipe === 'function') {
-//         bodyStream = options.body;
-//         options.body = null;
-//         requestStream = bodyStream.pipe(request(options));
-//       } else {
-//         requestStream = request(options);
-//       }
-//       requestStream.on('error', function (err) {
-//         return callback(err);
-//       });
-//       requestStream.on('response', function (response) {
-//         return callback(null, response);
-//       });
-//       return requestStream;
-//     } else if (options.body && typeof options.body.pipe === 'function') {
-//       bodyStream = options.body;
-//       options.body = null;
-//       return bodyStream.pipe(request(options, function (err, response, body) {
-//         if (err) { return callback(err); }
-//         return callback(null, response, body);
-//       }));
-//     } else {
-//       return request(options, function (err, response, body) {
-//         if (err) { return callback(err); }
-//         return callback(null, response, body);
-//       });
-//     }
-//   };
-// };
+ //  return function (options, callback) {
+ //    request = request.defaults(requestOptions);
+ //    var requestStream;
+ //    var bodyStream;
+ //    if (options.headersOnly) {
+ //      var requestHeaderStream = request(options);
+ //      requestHeaderStream.on('error', function (err) {
+ //        return callback(err);
+ //      });
+ //      requestHeaderStream.on('response', function (response) {
+ //        requestHeaderStream.on('end', function () {
+ //          return callback(null, response);
+ //        });
+ //      });      
+ //      return requestHeaderStream;
+ //    } else if (options.streamedResponse) {
+ //      if (options.body && typeof options.body.pipe === 'function') {
+ //        bodyStream = options.body;
+ //        options.body = null;
+ //        requestStream = bodyStream.pipe(request(options));
+ //      } else {
+ //        requestStream = request(options);
+ //      }
+ //      requestStream.on('error', function (err) {
+ //        return callback(err);
+ //      });
+ //      requestStream.on('response', function (response) {
+ //        return callback(null, response);
+ //      });
+ //      return requestStream;
+ //    } else if (options.body && typeof options.body.pipe === 'function') {
+ //      bodyStream = options.body;
+ //      options.body = null;
+ //      return bodyStream.pipe(request(options, function (err, response, body) {
+ //        if (err) { return callback(err); }
+ //        return callback(null, response, body);
+ //      }));
+ //    } else {
+ //      return request(options, function (err, response, body) {
+ //        if (err) { return callback(err); }
+ //        return callback(null, response, body);
+ //      });
+ //    }
+ //  };
+ //};
 
 exports.requestLibrarySink = function (requestOptions) {
   var initRequest = function(method, url) {
@@ -161,8 +161,13 @@ exports.requestLibrarySink = function (requestOptions) {
       if(superagentMock){
         superagentMock.unset();
       }
-
-      if (err) { return callback(err); }
+      if (err) {
+        if (err.status) {
+          // 4XX or 5XX are not considered as an error
+          return callback(null, res, res.error);
+        }
+        return callback(err);
+      }
       return callback(null, res, res.text);
     });
   };
