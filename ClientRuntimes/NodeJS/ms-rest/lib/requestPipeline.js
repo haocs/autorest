@@ -236,12 +236,12 @@ exports.createCompositeFilter = function() {
  * @returns a duplex stream that writes to the input stream and
  * produces data from the output stream.
  */
-exports.interimStream = function(setPipes) {
-  var input = through();
-  var output = through();
-  var duplex = duplexer(input, output);
-  setPipes(input, output);
-  return duplex;
-};
+// exports.interimStream = function(setPipes) {
+//   var input = through();
+//   var output = through();
+//   var duplex = duplexer(input, output);
+//   setPipes(input, output);
+//   return duplex;
+// };
 
 exports = module.exports;
