@@ -141,6 +141,10 @@ exports.requestLibrarySink = function (requestOptions) {
       request = request.put(url);
     } else if (method === 'POST') {
       request = request.post(url);
+    } else if (method === 'DELETE') {
+      request = request.del(url);
+    } else if (method === 'PATCH') {
+      request = request.patch(url);
     }
     return request;
   };
@@ -156,16 +160,16 @@ exports.requestLibrarySink = function (requestOptions) {
     if(requestOptions.headers){ request.set(requestOptions.headers); }
     if(options.headers){ request.set(options.headers); }
     if(options.query){ request.query(options.query); }
-    request.send(options.body);
+    if (options.body) {
+      request.send(options.body);
+    }
     return request.end(function(err, res){
       if(superagentMock){
         superagentMock.unset();
       }
-      if (err) {
-        if (err.status) {
-          // 4XX or 5XX are not considered as an error
-          return callback(null, res, res.error);
-        }
+      
+      if (err && !err.status) {
+        // 4XX or 5XX are not consider as an error.
         return callback(err);
       }
       return callback(null, res, res.text);
