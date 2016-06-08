@@ -4,10 +4,11 @@
 'use strict';
 
 //var request = require('request');
-var superagent = require('superagent');
-var agent = superagent.agent();
-var through = require('through');
-var duplexer = require('duplexer');
+//var superagent = require('superagent');
+//var agent = superagent.agent();
+//require('es6-promise').polyfill();
+//require('isomorphic-fetch');
+var fetch = require('fetch-cookie')(require('node-fetch'));
 var _ = require('underscore');
 var Constants = require('./constants');
 
@@ -131,51 +132,56 @@ exports.createWithSink = function(sink) {
  //};
 
 exports.requestLibrarySink = function (requestOptions) {
-  var initRequest = function(method, url) {
-    var request = agent;
-    if (method === 'GET') {
-      request = request.get(url);
-    } else if (method === 'HEAD') {
-      request = request.head(url);
-    } else if (method === 'PUT') {
-      request = request.put(url);
-    } else if (method === 'POST') {
-      request = request.post(url);
-    } else if (method === 'DELETE') {
-      request = request.del(url);
-    } else if (method === 'PATCH') {
-      request = request.patch(url);
-    }
-    return request;
-  };
-  
   return function (options, callback) {
-    var superagentMock = null;
-    if(requestOptions.testConfig){
-      superagentMock = require('superagent-mock')(superagent, requestOptions.testConfig);
+    var response = null;
+    
+    if (requestOptions && requestOptions.jar) {
+      options.credentials = 'include';
     }
+    fetch(options.url, options)
+    .then(function (res) {
+      response = res;
 
-    var request = initRequest(options.method, options.url);
-
-    if(requestOptions.headers){ request.set(requestOptions.headers); }
-    if(options.headers){ request.set(options.headers); }
-    if(options.query){ request.query(options.query); }
-    if (options.body) {
-      request.send(options.body);
-    }
-    return request.end(function(err, res){
-      if(superagentMock){
-        superagentMock.unset();
+      if (res && res.status) {
+        res.statusCode = res.status;
       }
-      
-      if (err && !err.status) {
-        // 4XX or 5XX are not consider as an error.
-        return callback(err);
-      }
-      return callback(null, res, res.text);
+      return res.text();
+    })
+    .then(function (body) {
+      callback(null, response, body);
+    }).catch(function (ex) {
+      // Prevent Promise.catch() swallowing exceptions.
+      process.nextTick(function () {
+        callback(ex);
+      });
     });
   };
 };
+
+// exports.requestLibrarySink = function (requestOptions) {
+  
+//   return function (options, callback) {
+//     var request = initRequest(options.method, options.url);
+
+//     if(requestOptions.headers){ request.set(requestOptions.headers); }
+//     if(options.headers){ request.set(options.headers); }
+//     if(options.query){ request.query(options.query); }
+//     if (options.body) {
+//       request.send(options.body);
+//     }
+//     return request.end(function(err, res){
+//       if(superagentMock){
+//         superagentMock.unset();
+//       }
+      
+//       if (err && !err.status) {
+//         // 4XX or 5XX are not consider as an error.
+//         return callback(err);
+//       }
+//       return callback(null, res, res.text);
+//     });
+//   };
+// };
 
 /**
  *
