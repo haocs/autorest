@@ -144,7 +144,7 @@ describe('nodejs', function () {
       testClient.xMsClientRequestId.paramGet(validClientId, function (error, result, request, response) {
         should.not.exist(error);
         response.statusCode.should.equal(200);
-        response.headers['x-ms-request-id'].should.equal('123');
+        response.headers.get('x-ms-request-id').should.equal('123');
         var options = {
           customHeaders: {
             'x-ms-client-request-id': validClientId
@@ -153,7 +153,7 @@ describe('nodejs', function () {
         testClient.xMsClientRequestId.get(options, function (error, result, request, response) {
           should.not.exist(error);
           response.statusCode.should.equal(200);
-          response.headers['x-ms-request-id'].should.equal('123');
+          response.headers.get('x-ms-request-id').should.equal('123');
           done();
         });
       });
@@ -165,7 +165,7 @@ describe('nodejs', function () {
       testClient2.xMsClientRequestId.get(function (error, result, request, response) {
         should.not.exist(error);
         response.statusCode.should.equal(200);
-        response.headers['x-ms-request-id'].should.equal('123');
+        response.headers.get('x-ms-request-id').should.equal('123');
         done();
       });
     });
@@ -179,7 +179,7 @@ describe('nodejs', function () {
       };
       testClient.xMsClientRequestId.get(options, function (error, result, request, response) {
         should.exist(error);
-        error.response.headers['x-ms-request-id'].should.equal('123');
+        error.response.headers.get('x-ms-request-id').should.equal('123');
         done();
       });
     });
@@ -189,7 +189,7 @@ describe('nodejs', function () {
         should.not.exist(error);
         response.statusCode.should.equal(200);
         should.not.exist(request.headers["x-ms-client-request-id"]);
-        should.equal(response.headers["foo-request-id"], "123");
+        should.equal(response.headers.get("foo-request-id"), "123");
         done();
       });
     });
@@ -199,7 +199,7 @@ describe('nodejs', function () {
         should.not.exist(error);
         response.statusCode.should.equal(200);
         should.not.exist(request.headers["x-ms-client-request-id"]);
-        should.equal(response.headers["foo-request-id"], "123");
+        should.equal(response.headers.get("foo-request-id"), "123");
         done();
       });
     });
