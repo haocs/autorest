@@ -140,19 +140,21 @@ exports.requestLibrarySink = function (requestOptions) {
     }
     fetch(options.url, options)
     .then(function (res) {
-      response = res;
+      response = res.clone();
 
-      if (res && res.status) {
-        res.statusCode = res.status;
+      if (response && response.status) {
+        response.statusCode = response.status;
       }
       return res.text();
-    })
-    .then(function (body) {
+    }).then(function (body) {
+      response.body = body;
+
       callback(null, response, body);
     }).catch(function (ex) {
       // Prevent Promise.catch() swallowing exceptions.
       process.nextTick(function () {
         callback(ex);
+        //throw ex;
       });
     });
   };
