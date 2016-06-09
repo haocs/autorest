@@ -76,8 +76,8 @@ PollingState.prototype.getTimeout = function () {
   if (this._retryTimeout || this._retryTimeout === 0) {
     return this._retryTimeout * 1000;
   }
-  if (this.response && this.response.headers['retry-after']) {
-    return parseInt(this.response.headers['retry-after']) * 1000;
+  if (this.response && this.response.headers.get('retry-after')) {
+    return parseInt(this.response.headers.get('retry-after')) * 1000;
   }
   return 30 * 1000;
 };
@@ -89,12 +89,12 @@ PollingState.prototype.getTimeout = function () {
 PollingState.prototype.updateResponse = function (response) {
   this.response = response;
   if (response && response.headers) {
-    if (response.headers['azure-asyncoperation']) {
-      this.azureAsyncOperationHeaderLink = response.headers['azure-asyncoperation'];
+    if (response.headers.get('azure-asyncoperation')) {
+      this.azureAsyncOperationHeaderLink = response.headers.get('azure-asyncoperation');
     }
     
-    if (response.headers['location']) {
-      this.locationHeaderLink = response.headers['location'];
+    if (response.headers.get('location')) {
+      this.locationHeaderLink = response.headers.get('location');
     }
   }
 };
