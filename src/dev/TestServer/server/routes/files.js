@@ -13,7 +13,12 @@ var files = function (coverage) {
     var options = {
       root: __dirname,
     };
-    res.sendFile('sample.png', options);
+    res.sendFile('sample.png', options, function(err) {
+      if (err) {
+        console.log(err);
+        res.status(err.status).end();
+      }
+    });
   });
   
   coverage['FileStreamVeryLarge'] = 0;
