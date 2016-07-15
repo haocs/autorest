@@ -3,9 +3,7 @@
 
 'use strict';
 
-var request = require('request');
-var through = require('through');
-var duplexer = require('duplexer');
+var fetch = require('fetch-cookie')(require('node-fetch'));
 var _ = require('underscore');
 var Constants = require('./constants');
 
@@ -80,51 +78,78 @@ exports.createWithSink = function(sink) {
  * @param callback function(err, result, response, body) callback function that
  * will be called at completion of the request.
  */
-exports.requestLibrarySink = function (requestOptions) {
+// exports.requestLibrarySink = function (requestOptions) {
 
+//   return function (options, callback) {
+//     request = request.defaults(requestOptions);
+//     var requestStream;
+//     var bodyStream;
+//     if (options.headersOnly) {
+//       var requestHeaderStream = request(options);
+//       requestHeaderStream.on('error', function (err) {
+//         return callback(err);
+//       });
+//       requestHeaderStream.on('response', function (response) {
+//         requestHeaderStream.on('end', function () {
+//           return callback(null, response);
+//         });
+//       });      
+//       return requestHeaderStream;
+//     } else if (options.streamedResponse) {
+//       if (options.body && typeof options.body.pipe === 'function') {
+//         bodyStream = options.body;
+//         options.body = null;
+//         requestStream = bodyStream.pipe(request(options));
+//       } else {
+//         requestStream = request(options);
+//       }
+//       requestStream.on('error', function (err) {
+//         return callback(err);
+//       });
+//       requestStream.on('response', function (response) {
+//         return callback(null, response);
+//       });
+//       return requestStream;
+//     } else if (options.body && typeof options.body.pipe === 'function') {
+//       bodyStream = options.body;
+//       options.body = null;
+//       return bodyStream.pipe(request(options, function (err, response, body) {
+//         if (err) { return callback(err); }
+//         return callback(null, response, body);
+//       }));
+//     } else {
+//       return request(options, function (err, response, body) {
+//         if (err) { return callback(err); }
+//         return callback(null, response, body);
+//       });
+//     }
+//   };
+// };
+
+exports.requestLibrarySink = function (requestOptions) {
   return function (options, callback) {
-    request = request.defaults(requestOptions);
-    var requestStream;
-    var bodyStream;
-    if (options.headersOnly) {
-      var requestHeaderStream = request(options);
-      requestHeaderStream.on('error', function (err) {
-        return callback(err);
-      });
-      requestHeaderStream.on('response', function (response) {
-        requestHeaderStream.on('end', function () {
-          return callback(null, response);
-        });
-      });      
-      return requestHeaderStream;
-    } else if (options.streamedResponse) {
-      if (options.body && typeof options.body.pipe === 'function') {
-        bodyStream = options.body;
-        options.body = null;
-        requestStream = bodyStream.pipe(request(options));
-      } else {
-        requestStream = request(options);
-      }
-      requestStream.on('error', function (err) {
-        return callback(err);
-      });
-      requestStream.on('response', function (response) {
-        return callback(null, response);
-      });
-      return requestStream;
-    } else if (options.body && typeof options.body.pipe === 'function') {
-      bodyStream = options.body;
-      options.body = null;
-      return bodyStream.pipe(request(options, function (err, response, body) {
-        if (err) { return callback(err); }
-        return callback(null, response, body);
-      }));
-    } else {
-      return request(options, function (err, response, body) {
-        if (err) { return callback(err); }
-        return callback(null, response, body);
-      });
+    var response = null;
+    
+    if (requestOptions && requestOptions.jar) {
+      options.credentials = 'include';
     }
+    var requestPromise = fetch(options.url, options);
+    requestPromise.then(function (res) {
+      response = res;
+
+      if (res && res.status) {
+        res.statusCode = res.status;
+      }
+      return res.text();
+    })
+    .then(function (body) {
+      callback(null, response, body);
+    }).catch(function (ex) {
+      // Prevent Promise.catch() swallowing exceptions.
+      process.nextTick(function () {
+        callback(ex);
+      });
+    });
   };
 };
 
@@ -196,12 +221,12 @@ exports.createCompositeFilter = function() {
  * @returns a duplex stream that writes to the input stream and
  * produces data from the output stream.
  */
-exports.interimStream = function(setPipes) {
-  var input = through();
-  var output = through();
-  var duplex = duplexer(input, output);
-  setPipes(input, output);
-  return duplex;
-};
+// exports.interimStream = function(setPipes) {
+//   var input = through();
+//   var output = through();
+//   var duplex = duplexer(input, output);
+//   setPipes(input, output);
+//   return duplex;
+// };
 
 exports = module.exports;
