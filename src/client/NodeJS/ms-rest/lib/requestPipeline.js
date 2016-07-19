@@ -134,22 +134,37 @@ exports.requestLibrarySink = function (requestOptions) {
       options.credentials = 'include';
     }
     var requestPromise = fetch(options.url, options);
-    requestPromise.then(function (res) {
-      response = res;
+    if (options.streamedResponse) {
+      requestPromise.then(function(res) {
+        if (res && res.status) {
+          res.statusCode = res.status;
+        }
+        return callback(null, res.body);
+      }).catch(function (ex) {
+        process.nextTick(function () {
+          throw ex;
+          //callback(ex);
+        });
+      });  
+    } else {
+      requestPromise.then(function (res) {
+        response = res;
 
-      if (res && res.status) {
-        res.statusCode = res.status;
-      }
-      return res.text();
-    })
-    .then(function (body) {
-      callback(null, response, body);
-    }).catch(function (ex) {
-      // Prevent Promise.catch() swallowing exceptions.
-      process.nextTick(function () {
-        callback(ex);
+        if (res && res.status) {
+          res.statusCode = res.status;
+        }
+        return res.text();
+      })
+      .then(function (body) {
+        callback(null, response, body);
+      })
+      .catch(function (ex) {
+        // Prevent Promise.catch() swallowing exceptions.
+        process.nextTick(function () {
+          callback(ex);
+        });
       });
-    });
+    };
   };
 };
 
