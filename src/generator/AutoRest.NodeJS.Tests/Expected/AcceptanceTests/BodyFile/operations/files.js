@@ -115,7 +115,7 @@ Files.prototype.getFile = function (options, callback) {
     }
 
     // Create Result
-    var result = response;
+    var result = response.body;
     return callback(null, result, httpRequest, response);
   });
 };
@@ -207,7 +207,7 @@ Files.prototype.getFileLarge = function (options, callback) {
     }
 
     // Create Result
-    var result = response;
+    var result = responseBody;
     return callback(null, result, httpRequest, response);
   });
 };
@@ -299,7 +299,7 @@ Files.prototype.getEmptyFile = function (options, callback) {
     }
 
     // Create Result
-    var result = response;
+    var result = responseBody;
     return callback(null, result, httpRequest, response);
   });
 };
