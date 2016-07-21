@@ -13,6 +13,7 @@
   "typings": "./lib/index.d.ts",
   "license": "MIT",
   "dependencies": {
+    "form-data": "^1.0.0-rc1",
     "underscore": "^1.4.0",
     "tunnel": "~0.0.2",
     "node-fetch": "1.5.3",

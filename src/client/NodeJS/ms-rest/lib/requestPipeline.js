@@ -6,6 +6,7 @@
 var fetch = require('fetch-cookie')(require('node-fetch'));
 var _ = require('underscore');
 var Constants = require('./constants');
+var FormData = require('form-data');
 
 var HttpVerbs = Constants.HttpVerbs;
 
@@ -128,43 +129,56 @@ exports.createWithSink = function(sink) {
 
 exports.requestLibrarySink = function (requestOptions) {
   return function (options, callback) {
-    var response = null;
     
     if (requestOptions && requestOptions.jar) {
       options.credentials = 'include';
     }
-    var requestPromise = fetch(options.url, options);
+    if (options.formData) {
+      // crate formdata
+      var form = new FormData();
+      var fileContent = options.formData.fileContent;
+      var fileName = options.formData.fileName;
+
+      if (fileContent !== undefined && fileContent !== null) {
+        form.append('fileContent', fileContent);
+      }
+      if (fileName !== undefined && fileName !== null) {
+        form.append('fileName', fileName);
+      }
+
+      options.body = form;
+    }
+
+    var requestPromise = fetch(options.url, options).then(function (res) {
+      if (res && res.status) {
+        res.statusCode = res.status;
+      }
+      return res;
+    });
+
     if (options.streamedResponse) {
-      requestPromise.then(function(res) {
-        if (res && res.status) {
-          res.statusCode = res.status;
-        }
-        return callback(null, res.body);
-      }).catch(function (ex) {
+      requestPromise = requestPromise.then(function(res) {
+        return callback(null, res, res.body);
+      });
+    } else {
+      // text response
+      var response = null;
+      requestPromise = requestPromise.then(function (res) {
+        response = res;
+        return res.text();
+      })
+      .then(function (body) {
+        return callback(null, response, body);
+      });
+    };
+
+    // Catch block may swallow the exception in testings since all other functions are callback based.
+    requestPromise.catch(function (ex) {
         process.nextTick(function () {
           throw ex;
           //callback(ex);
         });
       });  
-    } else {
-      requestPromise.then(function (res) {
-        response = res;
-
-        if (res && res.status) {
-          res.statusCode = res.status;
-        }
-        return res.text();
-      })
-      .then(function (body) {
-        callback(null, response, body);
-      })
-      .catch(function (ex) {
-        // Prevent Promise.catch() swallowing exceptions.
-        process.nextTick(function () {
-          callback(ex);
-        });
-      });
-    };
   };
 };
 
