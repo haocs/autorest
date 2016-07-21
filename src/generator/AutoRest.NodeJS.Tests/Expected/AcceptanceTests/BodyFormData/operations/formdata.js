@@ -139,7 +139,7 @@ Formdata.prototype.uploadFile = function (fileContent, fileName, options, callba
     }
 
     // Create Result
-    var result = response;
+    var result = responseBody;
     return callback(null, result, httpRequest, response);
   });
 };
