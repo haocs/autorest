@@ -134,21 +134,31 @@ exports.requestLibrarySink = function (requestOptions) {
       options.credentials = 'include';
     }
     if (options.formData) {
-      // crate formdata
-      var form = new FormData();
-      var fileContent = options.formData.fileContent;
-      var fileName = options.formData.fileName;
-
-      if (fileContent !== undefined && fileContent !== null) {
-        form.append('fileContent', fileContent);
+      var formData = options.formData;
+      var requestForm = new FormData();
+      var appendFormValue = function (key, value) {
+        if (value && value.hasOwnProperty('value') && value.hasOwnProperty('options')) {
+          requestForm.append(key, value.value, value.options)
+        } else {
+          requestForm.append(key, value)
+        }
       }
-      if (fileName !== undefined && fileName !== null) {
-        form.append('fileName', fileName);
+      for (var formKey in formData) {
+        if (formData.hasOwnProperty(formKey)) {
+          var formValue = formData[formKey]
+          if (formValue instanceof Array) {
+            for (var j = 0; j < formValue.length; j++) {
+              appendFormValue(formKey, formValue[j])
+            }
+          } else {
+            appendFormValue(formKey, formValue)
+          }
+        }
       }
 
-      options.body = form;
+      options.body = requestForm;
+      options.formData = null;
     }
-
     var requestPromise = fetch(options.url, options).then(function (res) {
       if (res && res.status) {
         res.statusCode = res.status;
@@ -172,13 +182,11 @@ exports.requestLibrarySink = function (requestOptions) {
       });
     };
 
-    // Catch block may swallow the exception in testings since all other functions are callback based.
     requestPromise.catch(function (ex) {
-        process.nextTick(function () {
-          throw ex;
-          //callback(ex);
-        });
-      });  
+      process.nextTick(function () {
+        callback(ex);
+      });
+    });  
   };
 };
 
