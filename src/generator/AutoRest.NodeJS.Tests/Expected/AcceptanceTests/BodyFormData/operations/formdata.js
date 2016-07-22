@@ -94,7 +94,7 @@ Formdata.prototype.uploadFile = function (fileContent, fileName, options, callba
       }
     }
   }
-  httpRequest.headers['Content-Type'] = 'multipart/form-data';
+  //httpRequest.headers['Content-Type'] = 'multipart/form-data';
   // Serialize Request  
   var formData = {};  
   if (fileContent !== undefined && fileContent !== null) {
@@ -243,7 +243,7 @@ Formdata.prototype.uploadFileViaBody = function (fileContent, options, callback)
     }
 
     // Create Result
-    var result = response;
+    var result = responseBody;
     return callback(null, result, httpRequest, response);
   });
 };
