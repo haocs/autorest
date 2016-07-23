@@ -138,20 +138,20 @@ exports.requestLibrarySink = function (requestOptions) {
       var requestForm = new FormData();
       var appendFormValue = function (key, value) {
         if (value && value.hasOwnProperty('value') && value.hasOwnProperty('options')) {
-          requestForm.append(key, value.value, value.options)
+          requestForm.append(key, value.value, value.options);
         } else {
-          requestForm.append(key, value)
+          requestForm.append(key, value);
         }
-      }
+      };
       for (var formKey in formData) {
         if (formData.hasOwnProperty(formKey)) {
-          var formValue = formData[formKey]
+          var formValue = formData[formKey];
           if (formValue instanceof Array) {
             for (var j = 0; j < formValue.length; j++) {
-              appendFormValue(formKey, formValue[j])
+              appendFormValue(formKey, formValue[j]);
             }
           } else {
-            appendFormValue(formKey, formValue)
+            appendFormValue(formKey, formValue);
           }
         }
       }
@@ -180,7 +180,7 @@ exports.requestLibrarySink = function (requestOptions) {
       .then(function (body) {
         return callback(null, response, body);
       });
-    };
+    }
 
     requestPromise.catch(function (ex) {
       process.nextTick(function () {
