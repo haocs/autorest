@@ -203,7 +203,7 @@ describe('msrest', function () {
     });
     it('should correctly serialize a string in DateTimeRfc1123', function (done) {
       mapper = { type : { name: 'DateTimeRfc1123' } };
-      var rfc = new Date('Mon, 01 Jan 0001 00:00:00 GMT');
+      var rfc = new Date('Mon, 01 Jan 2001 00:00:00 GMT');
       var serializedDateString = msRest.serialize(mapper, rfc, 'dateTimeObj');
       serializedDateString.should.equal('Mon, 01 Jan 2001 00:00:00 GMT');
       done();
