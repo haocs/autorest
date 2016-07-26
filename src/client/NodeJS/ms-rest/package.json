@@ -15,7 +15,6 @@
   "dependencies": {
     "underscore": "^1.4.0",
     "tunnel": "~0.0.2",
-    "url-parse": "^1.0.4",
     "node-fetch": "1.5.3",
     "form-data": "^1.0.0-rc1",
     "fetch-cookie": "0.1.3",
@@ -40,7 +39,8 @@
   },
   "scripts": {
     "test": "npm install && npm -s run-script jshint && npm -s run-script unit",
-    "test-browser": "zuul --local -- test/*.js",
+    "test-browser": "zuul --local 9000 -- test/*.js",
+    "debug-browser": "zuul --local 9000 --no-coverage test/*.js",
     "unit": "node test/unit.js testlist.txt",
     "jshint": "jshint lib --reporter=jslint"
   }
