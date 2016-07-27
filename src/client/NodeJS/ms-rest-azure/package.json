@@ -36,6 +36,8 @@
   "scripts": {
     "test": "npm install && npm -s run-script jshint && npm -s run-script unit",
     "unit": "node test/unit.js testlist.txt",
+    "test-browser": "zuul --local 9000 -- test/*.js",
+    "debug-browser": "zuul --local 9000 --no-coverage test/*.js",
     "jshint": "jshint lib --reporter=jslint"
   }
 }
