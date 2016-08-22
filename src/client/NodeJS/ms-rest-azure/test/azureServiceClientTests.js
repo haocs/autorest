@@ -9,7 +9,8 @@ var dump = util.inspect;
 var AzureServiceClient = require('../lib/azureServiceClient');
 var LroStates = require('../lib/constants').LongRunningOperationStates;
 var msRest = require('ms-rest');
-var UserTokenCredentials = require('../lib/credentials/userTokenCredentials');
+var azureAuth = require('ms-rest-azure-auth-node');
+var UserTokenCredentials = azureAuth.UserTokenCredentials;
 var credentials = new UserTokenCredentials('clientId', 'domain', 'username', 'password');
 
 describe('AzureServiceClient', function () {
