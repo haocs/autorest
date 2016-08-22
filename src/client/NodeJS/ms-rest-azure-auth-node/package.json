@@ -1,0 +1,41 @@
+{
+  "name": "ms-rest-azure-auth-node",
+  "author": {
+    "name": "Microsoft Corporation",
+    "email": "azsdkteam@microsoft.com",
+    "url": "https://github.com/Azure/AutoRest"
+  },
+  "version": "0.0.1",
+  "description": "Authentication for Node.js Azure client libraries generated using AutoRest",
+  "tags": [ "node", "microsoft", "autorest", "azure", "clientruntime" ],
+  "keywords": [ "node", "microsoft", "autorest", "azure", "clientruntime" ],
+  "main": "./lib/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "async": "0.2.7",
+    "adal-node": "^0.1.17",
+    "ms-rest": "^1.15.0",
+    "azure-arm-resource": "^1.4.4-preview"
+  },
+  "devDependencies": {
+    "jshint": "2.6.3",
+    "xunit-file": "0.0.5",
+    "mocha": "2.4.5",
+    "should": "5.2.0"
+  },
+  "homepage": "https://github.com/Azure/AutoRest",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Azure/AutoRest.git"
+  },
+  "bugs": {
+    "url": "http://github.com/Azure/AutoRest/issues"
+  },
+  "scripts": {
+    "test": "npm install && npm -s run-script jshint && npm -s run-script unit",
+    "unit": "node test/unit.js testlist.txt",
+    "test-browser": "zuul --local 9000 -- test/*.js",
+    "debug-browser": "zuul --local 9000 --no-coverage test/*.js",
+    "jshint": "jshint lib --reporter=jslint"
+  }
+}

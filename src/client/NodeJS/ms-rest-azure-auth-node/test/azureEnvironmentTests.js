@@ -2,17 +2,17 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 var should = require('should');
-var msRestAzure = require('../lib/msRestAzure');
+var msRestAzureAuth = require('../lib/index');
 
 describe('AzureEnvironment', function() {
   it('can be properly required', function(done) {
-    var tempEnv = msRestAzure.AzureEnvironment;
+    var tempEnv = msRestAzureAuth.AzureEnvironment;
     tempEnv.validateAuthority.should.equal(true);
     done();
   });
 
   it('should show the details of Azure Production environment correctly', function(done) {
-    var tempEnv = msRestAzure.AzureEnvironment.Azure;
+    var tempEnv = msRestAzureAuth.AzureEnvironment.Azure;
     tempEnv.name.should.equal('Azure');
     tempEnv.activeDirectoryEndpointUrl.should.equal('https://login.microsoftonline.com/');
     tempEnv.activeDirectoryResourceId.should.equal('https://management.core.windows.net/');
@@ -24,7 +24,7 @@ describe('AzureEnvironment', function() {
   });
 
   it('should show the details of Azure China environment correctly', function(done) {
-    var tempEnv = msRestAzure.AzureEnvironment.AzureChina;
+    var tempEnv = msRestAzureAuth.AzureEnvironment.AzureChina;
     tempEnv.name.should.equal('AzureChina');
     tempEnv.activeDirectoryEndpointUrl.should.equal('https://login.chinacloudapi.cn/');
     tempEnv.activeDirectoryResourceId.should.equal('https://management.core.chinacloudapi.cn/');
@@ -36,7 +36,7 @@ describe('AzureEnvironment', function() {
   });
 
   it('should show the details of Azure USGovernment environment correctly', function(done) {
-    var tempEnv = msRestAzure.AzureEnvironment.AzureUSGovernment;
+    var tempEnv = msRestAzureAuth.AzureEnvironment.AzureUSGovernment;
     tempEnv.name.should.equal('AzureUSGovernment');
     tempEnv.activeDirectoryEndpointUrl.should.equal('https://login.microsoftonline.com/');
     tempEnv.activeDirectoryResourceId.should.equal('https://management.core.usgovcloudapi.net/');
@@ -48,7 +48,7 @@ describe('AzureEnvironment', function() {
   });
 
   it('should show the details of Azure GermanCloud environment correctly', function(done) {
-    var tempEnv = msRestAzure.AzureEnvironment.AzureGermanCloud;
+    var tempEnv = msRestAzureAuth.AzureEnvironment.AzureGermanCloud;
     tempEnv.name.should.equal('AzureGermanCloud');
     tempEnv.activeDirectoryEndpointUrl.should.equal('https://login.microsoftonline.de/');
     tempEnv.activeDirectoryResourceId.should.equal('https://management.core.cloudapi.de/');
@@ -68,7 +68,7 @@ describe('AzureEnvironment', function() {
       activeDirectoryEndpointUrl: 'https://login.microsoftonline.com/',
       activeDirectoryResourceId: 'https://management.core.windows.net/'
     };
-    var tempEnv = msRestAzure.AzureEnvironment;
+    var tempEnv = msRestAzureAuth.AzureEnvironment;
     var dfood = tempEnv.add(df);
     dfood.name.should.equal('Dogfood');
     dfood.activeDirectoryEndpointUrl.should.equal('https://login.microsoftonline.com/');
