@@ -12,13 +12,10 @@
   "main": "./lib/msRestAzure.js",
   "license": "MIT",
   "dependencies": {
-    "ms-rest-azure-auth-node": "file:../ms-rest-azure-auth-node",
     "ms-rest": "file:../ms-rest",
     "async": "0.2.7",
     "uuid": "2.0.1",
-    "adal-node": "^0.1.17",
-    "moment": "^2.14.1",
-    "azure-arm-resource": "^1.4.4-preview"
+    "moment": "^2.14.1"
   },
   "devDependencies": {
     "jshint": "2.6.3",

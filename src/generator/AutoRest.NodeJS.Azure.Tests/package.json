@@ -20,6 +20,7 @@
   "dependencies": {
     "ms-rest": "file:../../client/NodeJS/ms-rest",
     "ms-rest-azure": "file:../../client/NodeJS/ms-rest-azure",
+    "ms-rest-azure-auth-node": "file:../../client/NodeJS/ms-rest-azure-auth-node",
     "jshint": "2.8.0",
     "moment":  "^2.14.1",
     "xunit-file": "0.0.5",
