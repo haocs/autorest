@@ -9,9 +9,7 @@ var dump = util.inspect;
 var AzureServiceClient = require('../lib/azureServiceClient');
 var LroStates = require('../lib/constants').LongRunningOperationStates;
 var msRest = require('ms-rest');
-var azureAuth = require('ms-rest-azure-auth-node');
-var UserTokenCredentials = azureAuth.UserTokenCredentials;
-var credentials = new UserTokenCredentials('clientId', 'domain', 'username', 'password');
+var credentials = new msRest.BasicAuthenticationCredentials('username', 'password');
 
 describe('AzureServiceClient', function () {
   describe('Constructor intialization', function () {
