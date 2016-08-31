@@ -41,6 +41,7 @@
     "test": "npm -s run-script jshint && npm -s run-script unit",
     "unit": "node unit.js testlist.txt list",
     "xunit": "node unit.js testlist.txt",
+    "test-browser": "zuul --local 9000 -- AcceptanceTests/*.js",
     "jshint": "jshint Expected --reporter=jslint"
   }
 }
