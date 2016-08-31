@@ -1,0 +1,13 @@
+name: azure-autorest-test
+ui: mocha-bdd
+browsers:
+  - name: chrome
+    version: latest
+  - name: firefox
+    version: latest
+  - name: safari
+    version: latest
+  - name: ie
+    version: 9..latest
+scripts:
+  - "unit.js"
