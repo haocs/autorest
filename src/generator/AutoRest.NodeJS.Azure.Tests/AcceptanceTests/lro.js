@@ -540,7 +540,7 @@ describe('nodejs', function () {
     it('should throw on PutAsyncRelativeRetryInvalidHeader', function (done) {
       testClient.lROSADs.putAsyncRelativeRetryInvalidHeader(product, function (error, result) {
         should.exist(error);
-        error.message.should.containEql('Invalid URI');
+        error.message.should.containEql('only absolute urls are supported');
         done();
       });
     });
@@ -556,7 +556,7 @@ describe('nodejs', function () {
     it('should throw on Delete202RetryInvalidHeader', function (done) {
       testClient.lROSADs.delete202RetryInvalidHeader(function (error, result) {
         should.exist(error);
-        error.message.should.containEql('Invalid URI');
+        error.message.should.containEql('only absolute urls are supported');
         done();
       });
     });
@@ -564,7 +564,7 @@ describe('nodejs', function () {
     it('should throw on DeleteAsyncRelativeRetryInvalidHeader', function (done) {
       testClient.lROSADs.deleteAsyncRelativeRetryInvalidHeader(function (error, result) {
         should.exist(error);
-        error.message.should.containEql('Invalid URI');
+        error.message.should.containEql('only absolute urls are supported');
         done();
       });
     });
@@ -580,7 +580,7 @@ describe('nodejs', function () {
     it('should throw on Post202RetryInvalidHeader', function (done) {
       testClient.lROSADs.post202RetryInvalidHeader(product, function (error, result) {
         should.exist(error);
-        error.message.should.containEql('Invalid URI');
+        error.message.should.containEql('only absolute urls are supported');
         done();
       });
     });
@@ -588,7 +588,7 @@ describe('nodejs', function () {
     it('should throw on PostAsyncRelativeRetryInvalidHeader', function (done) {
       testClient.lROSADs.postAsyncRelativeRetryInvalidHeader(product, function (error, result) {
         should.exist(error);
-        error.message.should.containEql('Invalid URI');
+        error.message.should.containEql('only absolute urls are supported');
         done();
       });
     });
