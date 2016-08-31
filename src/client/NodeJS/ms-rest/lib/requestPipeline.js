@@ -178,6 +178,7 @@ exports.requestLibrarySink = function (requestOptions) {
         return res.text();
       })
       .then(function (body) {
+        response.body = body;
         return callback(null, response, body);
       });
     }
