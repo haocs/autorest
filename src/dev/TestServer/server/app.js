@@ -476,6 +476,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Allow CORS for client side JS tests
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Methods", 'HEAD,GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  // Allow custom headers in reqeusts
+  res.header("Access-Control-Allow-Headers", req.headers['access-control-request-headers']);
+  
+  // intercept OPTIONS method
+  if ('OPTIONS' === req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use('/', routes);
 app.use('/bool', new bool(coverage).router);
 app.use('/int', new integer(coverage).router);
