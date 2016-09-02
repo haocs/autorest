@@ -131,6 +131,7 @@ exports.requestLibrarySink = function (requestOptions) {
   return function (options, callback) {
     
     if (requestOptions && requestOptions.jar) {
+      // Enable cookie for NodeJS as well as CORS for browsers.
       options.credentials = 'include';
     }
     if (options.formData) {
